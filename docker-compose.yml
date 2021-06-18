@@ -1,0 +1,34 @@
+version: '3'
+services:
+  tradingapp:
+    image: maven:3.6.3-jdk-11
+    command: mvn spring-boot:run
+    ports:
+      - 8090:8080
+    volumes:
+      - ./ms-trading:/app
+    working_dir: /app
+  db:
+    image: postgres:latest
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: 'postgres_db'
+      POSTGRES_USER: 'user'
+      POSTGRES_PASSWORD: 'user'
+    volumes:
+      -  ./db-data/:/var/lib/postgresql/data/
+
+  elasticsearch:
+    image: elasticsearch:2.4
+    ports:
+      - "9200:9200"
+    volumes:
+      - ./esdata/:/use/share/elasticsearch/data/
+  kibana:
+    image: kibana:4.6
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
